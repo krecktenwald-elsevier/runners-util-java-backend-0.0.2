@@ -4,8 +4,8 @@ select * from routes;
 select * from runs;
 
 --Populate Test Users:
-insert into users (user_id, create_date, email, first_name, last_name, password, is_admin, update_date) values ('b24849bc-f2c5-4d44-9527-95f2a25cc79c', '09-DEC-2022', 'kreck30590@gmail.com', 'Kyle', 'Recktenwald', 'eagles123', true, null);
-insert into users (user_id, create_date, email, first_name, last_name, password, is_admin, update_date) values ('57814da8-3ed4-443b-a5b1-5c059ee05b62', '09-DEC-2022', 'john.doe@gmail.com', 'John', 'Doe', 'test123', false, null);
+insert into users (user_id, create_date, update_date) values ('user_68883c2b-5ea3-4eee-a01a-09bfc0ff1ea2', '21-APR-2023', null);
+insert into users (user_id, create_date, update_date) values ('user_6aa87957-06b9-4e39-8eb6-385fb1d95b8a', '21-APR-2023', null);
 
 --Populate Test Routes:
 insert into routes (route_id, create_date, distance, name, update_date, user_id) values ('aad2b007-e80b-41bb-8498-a2ddbd8a3bfc', '09-DEC-2022', 10621, 'Penn''s Landing - Race Street Pier Turnaround', null, 'b24849bc-f2c5-4d44-9527-95f2a25cc79c');

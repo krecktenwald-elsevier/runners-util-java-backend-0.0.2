@@ -5,13 +5,13 @@ import com.krecktenwald.runnersutil.domain.dto.mapper.impl.RouteDTO;
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.RunDTO;
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.UserDTO;
 import com.krecktenwald.runnersutil.domain.entities.Route;
+import com.krecktenwald.runnersutil.domain.entities.Run;
+import com.krecktenwald.runnersutil.domain.entities.User;
 
-public interface CRUDEntityVisitor<T> {
-	T visit(UserDTO userDTO);
+public interface CRUDEntityDTOVisitor<T> {
+	T visit(Route route);
 
-	T visit(RunDTO runDTO);
+	T visit(User user);
 
-	T visit(RouteDTO routeDTO);
-
-	T visit(CreateRouteDTO routeDTO);
+	T visit(Run run);
 }
