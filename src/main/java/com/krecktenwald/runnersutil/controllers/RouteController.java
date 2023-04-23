@@ -2,9 +2,7 @@ package com.krecktenwald.runnersutil.controllers;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.krecktenwald.runnersutil.domain.dto.mapper.DTOMapper;
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.CreateRouteDTO;
+import com.krecktenwald.runnersutil.domain.dto.mapper.impl.RouteDTO;
 import com.krecktenwald.runnersutil.domain.entities.Route;
 import com.krecktenwald.runnersutil.domain.entities.User;
 import com.krecktenwald.runnersutil.repositories.RouteRepository;
@@ -57,55 +56,55 @@ public class RouteController {
 	}
 
 	@PostMapping()
-	public ResponseEntity<Route> createRoute(@RequestBody @Valid CreateRouteDTO createRouteDTO) throws URISyntaxException {
-		Route route = dtoMapper.map(createRouteDTO);
+	public ResponseEntity<RouteDTO> createRoute(@RequestBody @Valid RouteDTO routeDTO) throws URISyntaxException {
+		Route route = dtoMapper.map(routeDTO);
 		route.setRouteId(String.format("route_%s", UUID.randomUUID()));
 		route.setCreateDate(new Date());
 
-		if(createRouteDTO.getName() != null){
-			route.setName(createRouteDTO.getName());
-		}
-
-		if(createRouteDTO.getDistance() != null){
-			route.setDistance(createRouteDTO.getDistance());
-		}
-
-		if(createRouteDTO.getCreatorUserId() != null){
-			User creatorUser = userRepository.findById(createRouteDTO.getCreatorUserId()).orElseThrow(RuntimeException::new);
+		if(routeDTO.getCreatorUserID() != null){
+			User creatorUser = userRepository.findById(routeDTO.getCreatorUserID()).orElseThrow(RuntimeException::new);
 			route.setCreator(creatorUser);
 			//route.setUsersWithAccess(new HashSet<>(Collections.singletonList(createRouteDTO.getCreator())));
 		}
 
 		Route savedRoute = routeRepository.save(route);
+		RouteDTO savedRouteDTO = dtoMapper.map(savedRoute);
 
-		return ResponseEntity.created(new URI("/routes/" + savedRoute.getRouteId())).body(route);
+		savedRouteDTO.setCreatorUserID(savedRoute.getCreator().getUserId());
+
+		return ResponseEntity.created(new URI("/routes/" + savedRoute.getRouteId())).body(dtoMapper.map(savedRoute));
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Route> updateRoute(@PathVariable String id, @RequestBody CreateRouteDTO createRouteDTO) {
+	public ResponseEntity<RouteDTO> updateRoute(@PathVariable String id, @RequestBody RouteDTO routeDTO) {
 		Route currentRoute = routeRepository.findById(id).orElseThrow(RuntimeException::new);
 
-		if(createRouteDTO.getName() != null){
-			currentRoute.setName(createRouteDTO.getName());
+		if(routeDTO.getName() != null){
+			currentRoute.setName(routeDTO.getName());
 		}
 
-		if(createRouteDTO.getDistance() != null){
-			currentRoute.setDistance(createRouteDTO.getDistance());
+		if(routeDTO.getDistance() != null){
+			currentRoute.setDistance(routeDTO.getDistance());
 		}
 
-		if(createRouteDTO.getCreator() != null){
-			currentRoute.setCreator(createRouteDTO.getCreator());
+		if(routeDTO.getCreatorUserID() != null){
+			User creatorUser = userRepository.findById(routeDTO.getCreatorUserID()).orElseThrow(RuntimeException::new);
+			currentRoute.setCreator(creatorUser);
+			//route.setUsersWithAccess(new HashSet<>(Collections.singletonList(createRouteDTO.getCreator())));
 		}
 
 		currentRoute.setUpdateDate(new Date());
 
-		currentRoute = routeRepository.save(dtoMapper.map(createRouteDTO));
+		Route updatedRoute = routeRepository.save(currentRoute);
 
-		return ResponseEntity.ok(currentRoute);
+		RouteDTO updatedRouteDTO = dtoMapper.map(updatedRoute);
+		updatedRouteDTO.setCreatorUserID(updatedRoute.getCreator().getUserId());
+
+		return ResponseEntity.ok(updatedRouteDTO);
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Route> deleteRoute(@PathVariable String id) {
+	public ResponseEntity<RouteDTO> deleteRoute(@PathVariable String id) {
 		routeRepository.deleteById(id);
 		return ResponseEntity.ok().build();
 	}

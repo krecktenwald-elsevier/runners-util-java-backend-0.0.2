@@ -4,8 +4,6 @@ import java.util.Date;
 
 import com.krecktenwald.runnersutil.domain.dto.mapper.CRUDEntityVisitor;
 import com.krecktenwald.runnersutil.domain.entities.AbstractCRUDEntity;
-import com.krecktenwald.runnersutil.domain.entities.Route;
-import com.krecktenwald.runnersutil.domain.entities.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Temporal;
@@ -28,9 +26,9 @@ public class RunDTO extends AbstractCRUDEntityDTO {
 
 	private Integer distance;
 
-	private Route route;
+	private String userId;
 
-	private User user;
+	private String routeId;
 
 	@Override
 	public <T extends AbstractCRUDEntity> T accept(CRUDEntityVisitor<T> crudEntityDTOVisitor) {

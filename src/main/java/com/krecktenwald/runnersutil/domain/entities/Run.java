@@ -5,6 +5,9 @@ import java.util.Date;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.krecktenwald.runnersutil.domain.dto.mapper.CRUDEntityDTOVisitor;
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.AbstractCRUDEntityDTO;
 
@@ -44,10 +47,12 @@ public class Run extends AbstractCRUDEntity {
 	@Column(name = "end_date_time")
 	private Date endDateTime;
 
-	@OneToOne
-	@JoinColumn(name = "route_id")
+	@JsonBackReference(value="runs-route")
+	@ManyToOne
+	@JoinColumn(name="route_id")
 	private Route route;
 
+	@JsonBackReference(value="user-runs")
 	@ManyToOne
 	@JoinColumn(name="user_id", nullable=false)
 	private User user;

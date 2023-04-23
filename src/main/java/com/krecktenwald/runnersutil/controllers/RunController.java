@@ -20,8 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.krecktenwald.runnersutil.domain.dto.mapper.DTOMapper;
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.RunDTO;
+import com.krecktenwald.runnersutil.domain.entities.Route;
 import com.krecktenwald.runnersutil.domain.entities.Run;
+import com.krecktenwald.runnersutil.domain.entities.User;
+import com.krecktenwald.runnersutil.repositories.RouteRepository;
 import com.krecktenwald.runnersutil.repositories.RunRepository;
+import com.krecktenwald.runnersutil.repositories.UserRepository;
 
 import jakarta.validation.Valid;
 
@@ -31,6 +35,12 @@ import jakarta.validation.Valid;
 public class RunController {
 
 	private final RunRepository runRepository;
+
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private RouteRepository routeRepository;
 
 	@Autowired
 	DTOMapper dtoMapper;
@@ -50,30 +60,69 @@ public class RunController {
 	}
 
 	@PostMapping()
-	public ResponseEntity<Run> createRun(@RequestBody @Valid RunDTO runDTO) throws URISyntaxException {
+	public ResponseEntity<RunDTO> createRun(@RequestBody @Valid RunDTO runDTO) throws URISyntaxException {
 		Run run = dtoMapper.map(runDTO);
 		run.setRunId(String.format("run_%s", UUID.randomUUID()));
 		run.setCreateDate(new Date());
-		Run savedRun = runRepository.save(run);
-		return ResponseEntity.created(new URI("/runs/" + savedRun.getRunId())).body(savedRun);
+
+		if(runDTO.getUserId() != null){
+			User user = userRepository.findById(runDTO.getUserId()).orElseThrow(RuntimeException::new);
+			run.setUser(user);
+		}
+
+		if(runDTO.getRouteId() != null){
+			Route route = routeRepository.findById(runDTO.getRouteId()).orElseThrow(RuntimeException::new);
+			run.setRoute(route);
+		}
+
+		Run createdRun = runRepository.save(run);
+		RunDTO createdRunDTO = dtoMapper.map(createdRun);
+
+		createdRunDTO.setUserId(createdRun.getUser().getUserId());
+		createdRunDTO.setRouteId(createdRun.getRoute().getRouteId());
+
+		return ResponseEntity.created(new URI("/runs/" + createdRunDTO.getRunId())).body(createdRunDTO);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Run> updateRun(@PathVariable String id, @RequestBody RunDTO runDTO) {
+	public ResponseEntity<RunDTO> updateRun(@PathVariable String id, @RequestBody RunDTO runDTO) {
 		Run currentRun = runRepository.findById(id).orElseThrow(RuntimeException::new);
 
-		currentRun.setStartDateTime(runDTO.getStartDateTime());
-		currentRun.setEndDateTime(runDTO.getEndDateTime());
-		currentRun.setDistance(runDTO.getDistance());
+		if(runDTO.getDistance() != null){
+			currentRun.setDistance(runDTO.getDistance());
+		}
+
+		if(runDTO.getStartDateTime() != null){
+			currentRun.setStartDateTime(runDTO.getStartDateTime());
+		}
+
+		if(runDTO.getEndDateTime()!= null){
+			currentRun.setStartDateTime(runDTO.getEndDateTime());
+		}
+
+		if(runDTO.getUserId() != null){
+			User user = userRepository.findById(runDTO.getUserId()).orElseThrow(RuntimeException::new);
+			currentRun.setUser(user);
+		}
+
+		if(runDTO.getRouteId() != null){
+			Route route = routeRepository.findById(runDTO.getRunId()).orElseThrow(RuntimeException::new);
+			currentRun.setRoute(route);
+		}
+
 		currentRun.setUpdateDate(new Date());
+		Run updatedRun = runRepository.save(currentRun);
 
-		currentRun = runRepository.save(dtoMapper.map(runDTO));
+		RunDTO updatedRunDTO = dtoMapper.map(updatedRun);
 
-		return ResponseEntity.ok(currentRun);
+		updatedRunDTO.setUserId(updatedRun.getUser().getUserId());
+		updatedRunDTO.setRouteId(updatedRun.getRoute().getRouteId());
+
+		return ResponseEntity.ok(updatedRunDTO);
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Run> deleteRun(@PathVariable String id) {
+	public ResponseEntity<RunDTO> deleteRun(@PathVariable String id) {
 		runRepository.deleteById(id);
 		return ResponseEntity.ok().build();
 	}

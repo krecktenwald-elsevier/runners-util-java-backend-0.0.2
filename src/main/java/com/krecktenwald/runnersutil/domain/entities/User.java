@@ -1,13 +1,11 @@
 package com.krecktenwald.runnersutil.domain.entities;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.krecktenwald.runnersutil.domain.dto.mapper.CRUDEntityDTOVisitor;
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.AbstractCRUDEntityDTO;
 
@@ -15,9 +13,6 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -34,9 +29,11 @@ public class User extends AbstractCRUDEntity{
 	@GenericGenerator(name = "user_id", strategy = "uuid2")
 	private String userId;
 
+	@JsonManagedReference(value="user-runs")
 	@OneToMany(mappedBy="user")
 	private Set<Run> runs;
 
+	@JsonManagedReference(value="user-created-routes")
 	@OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Route> createdRoutes;
 

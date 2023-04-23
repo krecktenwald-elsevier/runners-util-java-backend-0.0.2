@@ -1,6 +1,7 @@
 package com.krecktenwald.runnersutil.domain.dto.mapper;
 
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.CreateRouteDTO;
+import com.krecktenwald.runnersutil.domain.dto.mapper.impl.CreateRunDTO;
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.RouteDTO;
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.RunDTO;
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.UserDTO;
@@ -14,4 +15,6 @@ public interface CRUDEntityVisitor<T> {
 	T visit(RouteDTO routeDTO);
 
 	T visit(CreateRouteDTO routeDTO);
+
+	T visit(CreateRunDTO routeDTO);
 }

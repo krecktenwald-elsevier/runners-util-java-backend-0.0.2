@@ -21,9 +21,9 @@ import lombok.Setter;
 public class UserDTO extends AbstractCRUDEntityDTO {
 	private String userId;
 
-	private Set<Run> runs;
+	private Set<String> runIDs;
 
-	private Set<Route> createdRoutes;
+	private Set<String> createdRouteIDs;
 
 	/*private Set<Route> accessibleRoutes;*/
 
