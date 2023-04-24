@@ -4,7 +4,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.krecktenwald.runnersutil.domain.dto.mapper.DTOMapper;
-import com.krecktenwald.runnersutil.domain.dto.mapper.impl.RouteDTO;
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.RunDTO;
 import com.krecktenwald.runnersutil.domain.entities.Route;
 import com.krecktenwald.runnersutil.domain.entities.Run;
