@@ -3,7 +3,8 @@ package com.krecktenwald.runnersutil.controllers;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.krecktenwald.runnersutil.domain.dto.mapper.DTOMapper;
-import com.krecktenwald.runnersutil.domain.dto.mapper.impl.CreateRouteDTO;
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.RouteDTO;
 import com.krecktenwald.runnersutil.domain.entities.Route;
 import com.krecktenwald.runnersutil.domain.entities.User;
@@ -35,24 +35,28 @@ public class RouteController {
 
 	private final RouteRepository routeRepository;
 
-	@Autowired
-	private DTOMapper dtoMapper;
+	@Autowired UserRepository userRepository;
 
 	@Autowired
-	private UserRepository userRepository;
+	private DTOMapper dtoMapper;
 
 	public RouteController(RouteRepository routeRepository) {
 		this.routeRepository = routeRepository;
 	}
 
 	@GetMapping
-	public List<Route> getRoutes() {
-		return routeRepository.findAll();
+	public Set<RouteDTO> getRoutes() {
+		Set<RouteDTO> routeDTOs = new HashSet<>();
+		for(Route route : routeRepository.findAll()){
+			routeDTOs.add(convertRouteToDTO(route));
+		}
+
+		return routeDTOs;
 	}
 
 	@GetMapping("/{id}")
-	public Route getRoute(@PathVariable String id) {
-		return routeRepository.findById(id).orElseThrow(RuntimeException::new);
+	public RouteDTO getRoute(@PathVariable String id) {
+		return convertRouteToDTO(routeRepository.findById(id).orElseThrow(RuntimeException::new));
 	}
 
 	@PostMapping()
@@ -62,50 +66,48 @@ public class RouteController {
 		route.setCreateDate(new Date());
 
 		if(routeDTO.getCreatorUserID() != null){
-			User creatorUser = userRepository.findById(routeDTO.getCreatorUserID()).orElseThrow(RuntimeException::new);
-			route.setCreator(creatorUser);
-			//route.setUsersWithAccess(new HashSet<>(Collections.singletonList(createRouteDTO.getCreator())));
+			route.setCreator(userRepository.findById(routeDTO.getCreatorUserID()).orElseThrow(RuntimeException::new));
 		}
 
 		Route savedRoute = routeRepository.save(route);
-		RouteDTO savedRouteDTO = dtoMapper.map(savedRoute);
-
+		RouteDTO savedRouteDTO = convertRouteToDTO(savedRoute);
 		savedRouteDTO.setCreatorUserID(savedRoute.getCreator().getUserId());
 
-		return ResponseEntity.created(new URI("/routes/" + savedRoute.getRouteId())).body(dtoMapper.map(savedRoute));
+		return ResponseEntity.created(new URI("/routes/" + savedRouteDTO.getRouteId())).body(savedRouteDTO);
 	}
 
 	@PutMapping("/{id}")
 	public ResponseEntity<RouteDTO> updateRoute(@PathVariable String id, @RequestBody RouteDTO routeDTO) {
-		Route currentRoute = routeRepository.findById(id).orElseThrow(RuntimeException::new);
+		Route existingRoute = routeRepository.findById(id).orElseThrow(RuntimeException::new);
 
 		if(routeDTO.getName() != null){
-			currentRoute.setName(routeDTO.getName());
+			existingRoute.setName(routeDTO.getName());
 		}
-
 		if(routeDTO.getDistance() != null){
-			currentRoute.setDistance(routeDTO.getDistance());
+			existingRoute.setDistance(routeDTO.getDistance());
 		}
-
 		if(routeDTO.getCreatorUserID() != null){
-			User creatorUser = userRepository.findById(routeDTO.getCreatorUserID()).orElseThrow(RuntimeException::new);
-			currentRoute.setCreator(creatorUser);
-			//route.setUsersWithAccess(new HashSet<>(Collections.singletonList(createRouteDTO.getCreator())));
+			existingRoute.setCreator(userRepository.findById(routeDTO.getCreatorUserID()).orElseThrow(RuntimeException::new));
 		}
 
-		currentRoute.setUpdateDate(new Date());
+		existingRoute.setUpdateDate(new Date());
 
-		Route updatedRoute = routeRepository.save(currentRoute);
-
-		RouteDTO updatedRouteDTO = dtoMapper.map(updatedRoute);
-		updatedRouteDTO.setCreatorUserID(updatedRoute.getCreator().getUserId());
-
-		return ResponseEntity.ok(updatedRouteDTO);
+		return ResponseEntity.ok(convertRouteToDTO(routeRepository.save(existingRoute)));
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<RouteDTO> deleteRoute(@PathVariable String id) {
 		routeRepository.deleteById(id);
 		return ResponseEntity.ok().build();
+	}
+
+	private RouteDTO convertRouteToDTO(Route route) {
+		RouteDTO routeDTO = dtoMapper.map(route);
+
+		if(route.getCreator() != null && route.getCreator().getUserId() != null){
+			routeDTO.setCreatorUserID(route.getCreator().getUserId());
+		}
+
+		return routeDTO;
 	}
 }

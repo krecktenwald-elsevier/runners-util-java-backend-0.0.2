@@ -3,7 +3,9 @@ package com.krecktenwald.runnersutil.controllers;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.krecktenwald.runnersutil.domain.dto.mapper.DTOMapper;
+import com.krecktenwald.runnersutil.domain.dto.mapper.impl.RouteDTO;
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.RunDTO;
 import com.krecktenwald.runnersutil.domain.entities.Route;
 import com.krecktenwald.runnersutil.domain.entities.Run;
@@ -50,13 +53,18 @@ public class RunController {
 	}
 
 	@GetMapping
-	public List<Run> getRuns() {
-		return runRepository.findAll();
+	public Set<RunDTO> getRuns() {
+		Set<RunDTO> runDTOs = new HashSet<>();
+		for(Run run : runRepository.findAll()){
+			runDTOs.add(convertRunToDTO(run));
+		}
+
+		return runDTOs;
 	}
 
 	@GetMapping("/{id}")
-	public Run getRun(@PathVariable String id) {
-		return runRepository.findById(id).orElseThrow(RuntimeException::new);
+	public RunDTO getRun(@PathVariable String id) {
+		return convertRunToDTO(runRepository.findById(id).orElseThrow(RuntimeException::new));
 	}
 
 	@PostMapping()
@@ -125,5 +133,19 @@ public class RunController {
 	public ResponseEntity<RunDTO> deleteRun(@PathVariable String id) {
 		runRepository.deleteById(id);
 		return ResponseEntity.ok().build();
+	}
+
+	private RunDTO convertRunToDTO(Run run) {
+		RunDTO runDTO = dtoMapper.map(run);
+
+		if(run.getUser() != null && run.getUser().getUserId() != null){
+			runDTO.setUserId(run.getUser().getUserId());
+		}
+
+		if(run.getRoute() != null && run.getRoute().getRouteId() != null){
+			runDTO.setRouteId(run.getRoute().getRouteId());
+		}
+
+		return runDTO;
 	}
 }

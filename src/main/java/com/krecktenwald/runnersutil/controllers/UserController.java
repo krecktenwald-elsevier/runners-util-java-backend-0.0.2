@@ -4,7 +4,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -21,13 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.krecktenwald.runnersutil.domain.dto.mapper.DTOMapper;
-import com.krecktenwald.runnersutil.domain.dto.mapper.impl.RouteDTO;
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.UserDTO;
 import com.krecktenwald.runnersutil.domain.entities.Route;
 import com.krecktenwald.runnersutil.domain.entities.Run;
 import com.krecktenwald.runnersutil.domain.entities.User;
-import com.krecktenwald.runnersutil.repositories.RouteRepository;
-import com.krecktenwald.runnersutil.repositories.RunRepository;
 import com.krecktenwald.runnersutil.repositories.UserRepository;
 
 import jakarta.validation.Valid;
@@ -58,8 +54,7 @@ public class UserController {
 
 	@GetMapping("/{id}")
 	public UserDTO getUser(@PathVariable String id) {
-		User user = userRepository.findById(id).orElseThrow(RuntimeException::new);
-		return convertUserToDTO(user);
+		return convertUserToDTO(userRepository.findById(id).orElseThrow(RuntimeException::new));
 	}
 
 	@PostMapping()
@@ -68,10 +63,9 @@ public class UserController {
 		user.setUserId(String.format("user_%s", UUID.randomUUID()));
 		user.setCreateDate(new Date());
 
-		User savedUser = userRepository.save(user);
-		UserDTO savedUserDTO = convertUserToDTO(savedUser);
+		UserDTO savedUserDTO = convertUserToDTO(userRepository.save(user));
 
-		return ResponseEntity.created(new URI("/api/users/" + savedUser.getUserId())).body(savedUserDTO);
+		return ResponseEntity.created(new URI("/api/users/" + savedUserDTO.getUserId())).body(savedUserDTO);
 	}
 
 	@PutMapping("/{id}")
@@ -80,8 +74,7 @@ public class UserController {
 
 		currentUser.setUpdateDate(new Date());
 		currentUser = userRepository.save(currentUser);
-		UserDTO savedUserDTO = convertUserToDTO(currentUser);
-		return ResponseEntity.ok(savedUserDTO);
+		return ResponseEntity.ok(convertUserToDTO(currentUser));
 	}
 
 	@DeleteMapping("/{id}")
@@ -89,7 +82,6 @@ public class UserController {
 		userRepository.deleteById(id);
 		return ResponseEntity.ok().build();
 	}
-
 
 	private UserDTO convertUserToDTO(User user) {
 		UserDTO userDTO = dtoMapper.map(user);

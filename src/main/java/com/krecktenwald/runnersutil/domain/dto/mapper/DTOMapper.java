@@ -4,8 +4,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.AbstractCRUDEntityDTO;
-import com.krecktenwald.runnersutil.domain.dto.mapper.impl.CreateRouteDTO;
-import com.krecktenwald.runnersutil.domain.dto.mapper.impl.CreateRunDTO;
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.RouteDTO;
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.RunDTO;
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.UserDTO;
@@ -45,11 +43,6 @@ public abstract class DTOMapper implements CRUDEntityVisitor<AbstractCRUDEntity>
 	}
 
 	@Override
-	public Run visit(CreateRunDTO createRunDTO) {
-		return map(createRunDTO);
-	}
-
-	@Override
 	public Route visit(RouteDTO routeDTO) {
 		return map(routeDTO);
 	}
@@ -57,11 +50,6 @@ public abstract class DTOMapper implements CRUDEntityVisitor<AbstractCRUDEntity>
 	@Override
 	public RouteDTO visit(Route route) {
 		return map(route);
-	}
-
-	@Override
-	public Route visit(CreateRouteDTO createRouteDTO) {
-		return map(createRouteDTO);
 	}
 
 	@Mapping(target = "runs", ignore = true)
@@ -76,10 +64,6 @@ public abstract class DTOMapper implements CRUDEntityVisitor<AbstractCRUDEntity>
 	@Mapping(target = "route", ignore = true)
 	public abstract Run map(RunDTO value);
 
-	@Mapping(target = "user", ignore = true)
-	@Mapping(target = "route", ignore = true)
-	public abstract Run map(CreateRunDTO value);
-
 	@Mapping(target = "userId", ignore = true)
 	@Mapping(target = "routeId", ignore = true)
 	public abstract RunDTO map(Run value);
@@ -90,8 +74,4 @@ public abstract class DTOMapper implements CRUDEntityVisitor<AbstractCRUDEntity>
 
 	@Mapping(target = "creatorUserID", ignore = true)
 	public abstract RouteDTO map(Route value);
-
-	@Mapping(target = "runs", ignore = true)
-	@Mapping(target = "creator", ignore = true)
-	public abstract Route map(CreateRouteDTO value);
 }

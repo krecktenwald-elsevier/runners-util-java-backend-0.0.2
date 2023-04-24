@@ -37,3 +37,6 @@ out/
 .vscode/
 
 target/
+
+### Generated Code i.e. Mapstruct ###
+src/main/generated/
