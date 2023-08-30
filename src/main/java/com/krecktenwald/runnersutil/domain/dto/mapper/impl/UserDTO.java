@@ -21,11 +21,15 @@ import lombok.Setter;
 public class UserDTO extends AbstractCRUDEntityDTO {
 	private String userId;
 
-	private Set<String> runIDs;
+	private String authId;
 
-	private Set<String> createdRouteIDs;
+	private String emailAddress;
 
-	/*private Set<Route> accessibleRoutes;*/
+	private Set<RoleDTO> roles;
+
+	private Set<String> runIds; // Instead of full Run objects
+
+	private Set<String> routeIds; // Instead of full Route objects
 
 	@Override
 	public <T extends AbstractCRUDEntity> T accept(CRUDEntityVisitor<T> crudEntityDTOVisitor) {

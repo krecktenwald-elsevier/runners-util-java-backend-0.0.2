@@ -16,16 +16,10 @@ import lombok.Setter;
 @Setter
 public class RouteDTO extends AbstractCRUDEntityDTO {
 	private String routeId;
-
 	private String name;
-
 	private Integer distance;
-
-	private String creatorUserID;
-
-/*
-	private Set<User> usersWithAccess = new HashSet<>();
-*/
+	private Set<String> runIds; // Instead of full Run objects
+	private String routeOwnerId; // Instead of full User object
 
 	@Override
 	public <T extends AbstractCRUDEntity> T accept(CRUDEntityVisitor<T> crudEntityDTOVisitor) {

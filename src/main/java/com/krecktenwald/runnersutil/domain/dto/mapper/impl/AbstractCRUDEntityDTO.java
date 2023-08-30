@@ -5,6 +5,7 @@ import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.krecktenwald.runnersutil.domain.dto.mapper.VisitableCRUDEntityDTO;
+import com.krecktenwald.runnersutil.domain.entities.CrudStatus;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -16,5 +17,10 @@ public abstract class AbstractCRUDEntityDTO implements VisitableCRUDEntityDTO {
 	private Date createDate;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
+
 	private Date updateDate;
+
+	private String createdById; // Instead of full User object
+
+	private String updatedById; // Instead of full User object
 }

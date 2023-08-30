@@ -40,16 +40,10 @@ public class Route extends AbstractCRUDEntity {
 	private Integer distance;
 
 	@ManyToOne
-	@JsonBackReference(value="user-created-routes")
-	@JoinColumn(name = "route_creator")
-	private User creator;
+	private User routeOwner;
 
-	@JsonManagedReference(value="runs-route")
 	@OneToMany(mappedBy="route")
 	private Set<Run> runs;
-
-/*	@ManyToMany(mappedBy = "accessibleRoutes")
-	private Set<User> usersWithAccess;*/
 
 	@Override
 	public <T extends AbstractCRUDEntityDTO> T accept(CRUDEntityDTOVisitor<T> crudEntityVisitor) {

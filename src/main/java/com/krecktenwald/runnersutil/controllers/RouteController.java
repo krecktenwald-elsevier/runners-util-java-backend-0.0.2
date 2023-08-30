@@ -30,7 +30,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("/api/routes")
+@RequestMapping("/routes")
 public class RouteController {
 
 	private final RouteRepository routeRepository;
@@ -59,7 +59,7 @@ public class RouteController {
 		return convertRouteToDTO(routeRepository.findById(id).orElseThrow(RuntimeException::new));
 	}
 
-	@PostMapping()
+	@PostMapping
 	public ResponseEntity<RouteDTO> createRoute(@RequestBody @Valid RouteDTO routeDTO) throws URISyntaxException {
 		Route route = dtoMapper.map(routeDTO);
 		route.setRouteId(String.format("route_%s", UUID.randomUUID()));

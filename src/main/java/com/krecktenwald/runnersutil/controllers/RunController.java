@@ -9,6 +9,8 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +34,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("/api/runs")
+@RequestMapping("/runs")
 public class RunController {
 
 	private final RunRepository runRepository;
@@ -65,7 +67,7 @@ public class RunController {
 		return convertRunToDTO(runRepository.findById(id).orElseThrow(RuntimeException::new));
 	}
 
-	@PostMapping()
+	@PostMapping
 	public ResponseEntity<RunDTO> createRun(@RequestBody @Valid RunDTO runDTO) throws URISyntaxException {
 		Run run = dtoMapper.map(runDTO);
 		run.setRunId(String.format("run_%s", UUID.randomUUID()));
@@ -127,6 +129,9 @@ public class RunController {
 		return ResponseEntity.ok(updatedRunDTO);
 	}
 
+
+	//@Secured("ROLE_ADMIN")
+	@PostAuthorize("hasRole('ADMIN') or #id == authentication.name")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<RunDTO> deleteRun(@PathVariable String id) {
 		runRepository.deleteById(id);

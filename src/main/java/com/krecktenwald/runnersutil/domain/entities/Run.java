@@ -47,12 +47,10 @@ public class Run extends AbstractCRUDEntity {
 	@Column(name = "end_date_time")
 	private Date endDateTime;
 
-	@JsonBackReference(value="runs-route")
 	@ManyToOne
 	@JoinColumn(name="route_id")
 	private Route route;
 
-	@JsonBackReference(value="user-runs")
 	@ManyToOne
 	@JoinColumn(name="user_id", nullable=false)
 	private User user;

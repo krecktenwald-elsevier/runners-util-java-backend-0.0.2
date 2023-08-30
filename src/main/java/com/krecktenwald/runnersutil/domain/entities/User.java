@@ -1,5 +1,6 @@
 package com.krecktenwald.runnersutil.domain.entities;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -10,9 +11,14 @@ import com.krecktenwald.runnersutil.domain.dto.mapper.CRUDEntityDTOVisitor;
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.AbstractCRUDEntityDTO;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -25,25 +31,26 @@ import lombok.Setter;
 @Getter
 @Setter
 public class User extends AbstractCRUDEntity{
+
 	@Id
 	@GenericGenerator(name = "user_id", strategy = "uuid2")
 	private String userId;
 
-	@JsonManagedReference(value="user-runs")
-	@OneToMany(mappedBy="user")
-	private Set<Run> runs;
+	private String authId;
 
-	@JsonManagedReference(value="user-created-routes")
-	@OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<Route> createdRoutes;
+	private String emailAddress;
 
-	/*@ManyToMany
+	@ManyToMany
 	@JoinTable(
-			name = "users_accessible_routes",
+			name = "user_role",
 			joinColumns = @JoinColumn(name = "user_id"),
-			inverseJoinColumns = @JoinColumn(name = "route_id")
+			inverseJoinColumns = @JoinColumn(name = "role_id")
 	)
-	private Set<Route> accessibleRoutes;*/
+	@OneToMany(mappedBy = "runOwner", cascade = CascadeType.ALL)
+	private Set<Run> runs = new HashSet<>();
+
+	@OneToMany(mappedBy = "routeOwner", cascade = CascadeType.ALL)
+	private Set<Route> routes = new HashSet<>();
 
 	@Override
 	public <T extends AbstractCRUDEntityDTO> T accept(CRUDEntityDTOVisitor<T> crudEntityVisitor) {

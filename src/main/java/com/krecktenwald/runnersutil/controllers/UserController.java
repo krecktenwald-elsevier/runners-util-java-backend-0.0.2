@@ -9,6 +9,9 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +33,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 public class UserController {
 
 	private final UserRepository userRepository;
@@ -57,7 +60,7 @@ public class UserController {
 		return convertUserToDTO(userRepository.findById(id).orElseThrow(RuntimeException::new));
 	}
 
-	@PostMapping()
+	@PostMapping
 	public ResponseEntity<UserDTO> createUser(@RequestBody @Valid UserDTO userDTO) throws URISyntaxException {
 		User user = dtoMapper.map(userDTO);
 		user.setUserId(String.format("user_%s", UUID.randomUUID()));
