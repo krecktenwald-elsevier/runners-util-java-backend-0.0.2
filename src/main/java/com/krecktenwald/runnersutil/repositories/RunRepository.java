@@ -1,8 +1,6 @@
 package com.krecktenwald.runnersutil.repositories;
 
+import com.krecktenwald.runnersutil.domain.entities.Run;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.krecktenwald.runnersutil.domain.entities.Run;
-
-public interface RunRepository extends JpaRepository<Run, String> {
-}
+public interface RunRepository extends JpaRepository<Run, String> {}

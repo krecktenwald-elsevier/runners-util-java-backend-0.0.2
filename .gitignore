@@ -38,5 +38,5 @@ out/
 
 target/
 
-### Generated Code i.e. Mapstruct ###
+### Generated Code ###
 src/main/generated/

@@ -1,65 +1,68 @@
 package com.krecktenwald.runnersutil.domain.dto.mapper;
 
-import org.mapstruct.Mapper;
-
-import com.krecktenwald.runnersutil.domain.dto.mapper.impl.AbstractCRUDEntityDTO;
+import com.krecktenwald.runnersutil.domain.dto.mapper.impl.RoleDTO;
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.RouteDTO;
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.RunDTO;
 import com.krecktenwald.runnersutil.domain.dto.mapper.impl.UserDTO;
-import com.krecktenwald.runnersutil.domain.entities.AbstractCRUDEntity;
+import com.krecktenwald.runnersutil.domain.entities.Role;
 import com.krecktenwald.runnersutil.domain.entities.Route;
 import com.krecktenwald.runnersutil.domain.entities.Run;
 import com.krecktenwald.runnersutil.domain.entities.User;
+import java.util.List;
+import java.util.Set;
 
-/**
- * * A MapStruct (mapstruct.org) based mapping interface for converting
- * POJO/Entity objects to Data Transfer Objects (DTOs), and vice-versa
- */
-@Mapper(componentModel = "spring")
-public abstract class DTOMapper implements CRUDEntityVisitor<AbstractCRUDEntity>, CRUDEntityDTOVisitor<AbstractCRUDEntityDTO> {
-	public AbstractCRUDEntity crudEntityDTOToCrudEntity(AbstractCRUDEntityDTO crudEntityDTO) {
-		return crudEntityDTO.accept(this);
-	}
+/** * Maps POJO/Entity objects to Data Transfer Objects (DTOs), and vice-versa */
+public interface DTOMapper {
 
-	@Override
-	public User visit(UserDTO userDTO) {
-		return map(userDTO);
-	}
+  // Entity to DTO mappings
+  RoleDTO roleToRoleDTO(Role role);
 
-	@Override
-	public UserDTO visit(User user) {
-		return map(user);
-	}
+  UserDTO userToUserDTO(User user);
 
-	@Override
-	public Run visit(RunDTO runDTO) {
-		return map(runDTO);
-	}
+  RouteDTO routeToRouteDTO(Route route);
 
-	@Override
-	public RunDTO visit(Run run) {
-		return map(run);
-	}
+  RunDTO runToRunDTO(Run run);
 
-	@Override
-	public Route visit(RouteDTO routeDTO) {
-		return map(routeDTO);
-	}
+  // DTO to Entity mappings
+  Role roleDTOToRole(RoleDTO roleDTO);
 
-	@Override
-	public RouteDTO visit(Route route) {
-		return map(route);
-	}
+  User userDTOToUser(UserDTO userDTO);
 
-	public abstract User map(UserDTO value);
+  Route routeDTOToRoute(RouteDTO routeDTO);
 
-	public abstract UserDTO map(User value);
+  Run runDTOToRun(RunDTO runDTO);
 
-	public abstract Run map(RunDTO value);
+  // Mapping for Set conversions
+  Set<RoleDTO> rolesToRoleDTOs(Set<Role> roles);
 
-	public abstract RunDTO map(Run value);
+  Set<UserDTO> usersToUserDTOs(Set<User> users);
 
-	public abstract Route map(RouteDTO value);
+  Set<RouteDTO> routesToRouteDTOs(Set<Route> routes);
 
-	public abstract RouteDTO map(Route value);
+  Set<RunDTO> runsToRunDTOs(Set<Run> runs);
+
+  Set<Role> roleDTOsToRoles(Set<RoleDTO> roleDTOs);
+
+  Set<User> userDTOsToUsers(Set<UserDTO> userDTOs);
+
+  Set<Route> routeDTOsToRoutes(Set<RouteDTO> routeDTOs);
+
+  Set<Run> runDTOsToRuns(Set<RunDTO> runDTOs);
+
+  // Mapping for List conversions
+  List<RoleDTO> rolesToRoleDTOs(List<Role> roles);
+
+  List<UserDTO> usersToUserDTOs(List<User> users);
+
+  List<RouteDTO> routesToRouteDTOs(List<Route> routes);
+
+  List<RunDTO> runsToRunDTOs(List<Run> runs);
+
+  List<Role> roleDTOsToRoles(List<RoleDTO> roleDTOs);
+
+  List<User> userDTOsToUsers(List<UserDTO> userDTOs);
+
+  List<Route> routeDTOsToRoutes(List<RouteDTO> routeDTOs);
+
+  List<Run> runDTOsToRuns(List<RunDTO> runDTOs);
 }

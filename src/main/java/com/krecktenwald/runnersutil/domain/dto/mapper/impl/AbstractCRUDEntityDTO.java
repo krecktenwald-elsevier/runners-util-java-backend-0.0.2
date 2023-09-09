@@ -1,26 +1,23 @@
 package com.krecktenwald.runnersutil.domain.dto.mapper.impl;
 
-import java.util.Date;
-
-import org.springframework.format.annotation.DateTimeFormat;
-
-import com.krecktenwald.runnersutil.domain.dto.mapper.VisitableCRUDEntityDTO;
 import com.krecktenwald.runnersutil.domain.entities.CrudStatus;
-
+import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Getter
 @Setter
-public abstract class AbstractCRUDEntityDTO implements VisitableCRUDEntityDTO {
-	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
-	private Date createDate;
+public abstract class AbstractCRUDEntityDTO {
+  private CrudStatus crudStatus;
 
-	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
+  @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
+  private Date createDate;
 
-	private Date updateDate;
+  @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
+  private Date updateDate;
 
-	private String createdById; // Instead of full User object
+  private String createdBy;
 
-	private String updatedById; // Instead of full User object
+  private String updatedBy;
 }
